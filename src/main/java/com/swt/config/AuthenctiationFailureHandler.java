@@ -19,11 +19,17 @@ public class AuthenctiationFailureHandler extends SimpleUrlAuthenticationFailure
     private ObjectMapper objectMapper;
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+                                        AuthenticationException exception) throws IOException, ServletException {
 
-        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write(objectMapper.writeValueAsString("LOGIN FAIL!!!"));
+        String requestType = request.getHeader("X-Requested-With");
+        if ("XMLHttpRequest".equals(requestType)) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write(objectMapper.writeValueAsString("LOGIN FAIL!!!"));
+        } else {
+            super.onAuthenticationFailure(request, response, exception);
+        }
 
     }
 }

@@ -18,18 +18,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationSuccessHandler authenticationSuccessHandler;
 
-    @Bean
-    public PasswordEncoder PasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .formLogin()//表单登录
                     .loginPage("/login")//登录地址
                     .loginProcessingUrl("/dologin")
-                    //.successHandler(authenticationSuccessHandler)//成功处理
+                    .successHandler(authenticationSuccessHandler)//成功处理
                     .failureHandler(authenticationFailureHandler)//失败处理
                     .permitAll()
                     .and()
@@ -38,5 +33,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
                     .anyRequest()
                     .authenticated();
+    }
+
+    @Bean
+    public PasswordEncoder PasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
